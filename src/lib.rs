@@ -18,16 +18,8 @@ macro_rules! read {
     }};
 }
 
-fn rl() -> String {
+pub fn rl() -> String {
     let mut buf = String::new();
     stdin().read_line(&mut buf).unwrap();
     buf.trim_end().to_owned()
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 }
