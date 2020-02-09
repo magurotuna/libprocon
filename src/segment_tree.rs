@@ -69,6 +69,11 @@ where
 mod tests {
     use super::*;
 
+    /// leaves:
+    /// +---------------+
+    /// | 2 | 4 | 3 | 0 |
+    /// +---------------+
+
     #[test]
     fn test_segment_tree_min() {
         let ident: usize = 1 << 60;
@@ -78,6 +83,10 @@ mod tests {
         st.update(2, 3);
         st.update(3, 0);
         assert_eq!(2, st.query(0, 3));
+        assert_eq!(2, st.query(0, 2));
+        assert_eq!(3, st.query(1, 3));
+        assert_eq!(0, st.query(1, 4));
+        assert_eq!(0, st.query(2, 4));
     }
 
     #[test]
@@ -89,6 +98,10 @@ mod tests {
         st.update(2, 3);
         st.update(3, 0);
         assert_eq!(4, st.query(0, 3));
+        assert_eq!(4, st.query(0, 2));
+        assert_eq!(4, st.query(1, 3));
+        assert_eq!(4, st.query(1, 4));
+        assert_eq!(3, st.query(2, 4));
     }
 
     #[test]
