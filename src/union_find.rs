@@ -5,7 +5,7 @@ pub struct DisjointSet {
 }
 
 impl DisjointSet {
-    fn new(n: usize) -> Self {
+    pub fn new(n: usize) -> Self {
         Self {
             parent: (0..n).collect(),
             rank: vec![0; n],
