@@ -1,10 +1,12 @@
-use std::collections::{HashMap, VecDeque};
+use cargo_snippet::snippet;
 
+#[snippet("PRIME")]
 pub trait Prime {
     fn lower_primes(&self) -> Vec<usize>;
-    fn factorize(&self) -> HashMap<usize, usize>;
+    fn factorize(&self) -> std::collections::HashMap<usize, usize>;
 }
 
+#[snippet("PRIME")]
 impl Prime for usize {
     /// エラトステネスの篩を用いてself以下の素数を求める
     /// 計算量: O(n log log n)
@@ -14,7 +16,7 @@ impl Prime for usize {
         if this < 2 {
             return v;
         }
-        let mut deque = (2..(this + 1)).collect::<VecDeque<usize>>();
+        let mut deque = (2..(this + 1)).collect::<std::collections::VecDeque<usize>>();
 
         let mut p = match deque.pop_front() {
             Some(x) => x,
@@ -36,8 +38,8 @@ impl Prime for usize {
     }
 
     /// エラトステネスの篩を用いてselfを素因数分解する
-    fn factorize(&self) -> HashMap<usize, usize> {
-        let mut ret = HashMap::new();
+    fn factorize(&self) -> std::collections::HashMap<usize, usize> {
+        let mut ret = std::collections::HashMap::new();
         let primes = ((*self as f64).sqrt() as usize).lower_primes();
 
         let mut tmp = *self;
@@ -54,39 +56,45 @@ impl Prime for usize {
     }
 }
 
-#[test]
-fn test_lower_primes() {
-    assert_eq!(10_usize.lower_primes(), vec![2_usize, 3, 5, 7]);
-    assert_eq!(15_usize.lower_primes(), vec![2_usize, 3, 5, 7, 11, 13]);
-    assert_eq!(1_usize.lower_primes(), vec![]);
-    assert_eq!(2_usize.lower_primes(), vec![2_usize]);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashMap;
 
-#[test]
-fn test_factorize() {
-    let mut result_10 = HashMap::new();
-    result_10.insert(2_usize, 1_usize);
-    result_10.insert(5_usize, 1_usize);
-    assert_eq!(10_usize.factorize(), result_10);
+    #[test]
+    fn test_lower_primes() {
+        assert_eq!(10_usize.lower_primes(), vec![2_usize, 3, 5, 7]);
+        assert_eq!(15_usize.lower_primes(), vec![2_usize, 3, 5, 7, 11, 13]);
+        assert_eq!(1_usize.lower_primes(), vec![]);
+        assert_eq!(2_usize.lower_primes(), vec![2_usize]);
+    }
 
-    let mut result_12 = HashMap::new();
-    result_12.insert(2_usize, 2_usize);
-    result_12.insert(3_usize, 1_usize);
-    assert_eq!(12_usize.factorize(), result_12);
+    #[test]
+    fn test_factorize() {
+        let mut result_10 = HashMap::new();
+        result_10.insert(2_usize, 1_usize);
+        result_10.insert(5_usize, 1_usize);
+        assert_eq!(10_usize.factorize(), result_10);
 
-    let result_1 = HashMap::new();
-    assert_eq!(1_usize.factorize(), result_1);
+        let mut result_12 = HashMap::new();
+        result_12.insert(2_usize, 2_usize);
+        result_12.insert(3_usize, 1_usize);
+        assert_eq!(12_usize.factorize(), result_12);
 
-    let result_0 = HashMap::new();
-    assert_eq!(0_usize.factorize(), result_0);
+        let result_1 = HashMap::new();
+        assert_eq!(1_usize.factorize(), result_1);
 
-    let mut result_99991 = HashMap::new();
-    result_99991.insert(99991_usize, 1_usize);
-    assert_eq!(99991_usize.factorize(), result_99991);
+        let result_0 = HashMap::new();
+        assert_eq!(0_usize.factorize(), result_0);
 
-    let mut result_2013 = HashMap::new();
-    result_2013.insert(3_usize, 1_usize);
-    result_2013.insert(11_usize, 1_usize);
-    result_2013.insert(61_usize, 1_usize);
-    assert_eq!(2013_usize.factorize(), result_2013);
+        let mut result_99991 = HashMap::new();
+        result_99991.insert(99991_usize, 1_usize);
+        assert_eq!(99991_usize.factorize(), result_99991);
+
+        let mut result_2013 = HashMap::new();
+        result_2013.insert(3_usize, 1_usize);
+        result_2013.insert(11_usize, 1_usize);
+        result_2013.insert(61_usize, 1_usize);
+        assert_eq!(2013_usize.factorize(), result_2013);
+    }
 }
