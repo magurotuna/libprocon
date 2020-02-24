@@ -1,13 +1,13 @@
 use cargo_snippet::snippet;
 
-#[snippet("DisjointSet")]
+#[snippet("DISJOINT_SET")]
 #[derive(Debug, Clone)]
 pub struct DisjointSet {
     parent: Vec<usize>,
     rank: Vec<usize>,
 }
 
-#[snippet("DisjointSet")]
+#[snippet("DISJOINT_SET")]
 impl DisjointSet {
     pub fn new(n: usize) -> Self {
         Self {

@@ -1,6 +1,6 @@
 use cargo_snippet::snippet;
 
-#[snippet("SEG")]
+#[snippet("SEG_TREE")]
 #[derive(Debug)]
 pub struct SegmentTree<T, F>
 where
@@ -13,7 +13,7 @@ where
     func: F,
 }
 
-#[snippet("SEG")]
+#[snippet("SEG_TREE")]
 impl<T, F> SegmentTree<T, F>
 where
     T: Clone + Copy,
