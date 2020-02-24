@@ -1,5 +1,8 @@
+use cargo_snippet::snippet;
+
 // ref: https://github.com/hatoo/competitive-rust-snippets/blob/master/src/modulo.rs
 
+#[snippet("GCD")]
 pub fn gcd(a: u64, b: u64) -> u64 {
     if b == 0 {
         a
@@ -8,11 +11,13 @@ pub fn gcd(a: u64, b: u64) -> u64 {
     }
 }
 
+#[snippet("LCM", include = "GCD")]
 pub fn lcm(a: u64, b: u64) -> u64 {
     a / gcd(a, b) * b
 }
 
 /// 累乗のmod
+#[snippet("MOD_POW")]
 pub fn mod_pow(x: u64, n: u64, m: u64) -> u64 {
     let mut res = 1;
     let mut x = x % m;
@@ -30,6 +35,7 @@ pub fn mod_pow(x: u64, n: u64, m: u64) -> u64 {
 /// mod m での a の逆元を求める
 /// m と a が互いに素でなければならないことに注意
 /// cf. [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜 - Qiita](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
+#[snippet("MOD_INV")]
 pub fn mod_inv(a: u64, m: u64) -> u64 {
     use std::mem::swap;
     let mut a = a as i64;
@@ -52,6 +58,7 @@ pub fn mod_inv(a: u64, m: u64) -> u64 {
 
 /// 二項係数を mod のもとで求める
 /// cf. [よくやる二項係数 (nCk mod. p)、逆元 (a^-1 mod. p) の求め方 - けんちょんの競プロ精進記録](http://drken1215.hatenablog.com/entry/2018/06/08/210000)
+#[snippet("COMBINATION")]
 pub struct Comb {
     max_size: usize,
     modulo: usize,
@@ -60,6 +67,7 @@ pub struct Comb {
     inverse_table: Vec<usize>,
 }
 
+#[snippet("COMBINATION")]
 impl Comb {
     pub fn new(max_size: usize, modulo: usize) -> Self {
         let max_size = std::cmp::max(10, max_size);
