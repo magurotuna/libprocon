@@ -1,5 +1,19 @@
 use cargo_snippet::snippet;
 
+#[snippet("GCD")]
+pub fn gcd(a: u64, b: u64) -> u64 {
+    if b == 0 {
+        a
+    } else {
+        gcd(b, a % b)
+    }
+}
+
+#[snippet("LCM", include = "GCD")]
+pub fn lcm(a: u64, b: u64) -> u64 {
+    a / gcd(a, b) * b
+}
+
 #[snippet("PRIME")]
 pub trait Prime {
     fn lower_primes(&self) -> Vec<usize>;
@@ -60,6 +74,18 @@ impl Prime for usize {
 mod tests {
     use super::*;
     use std::collections::HashMap;
+
+    #[test]
+    fn test_gcd() {
+        assert_eq!(gcd(3, 7), 1);
+        assert_eq!(gcd(10, 5), 5);
+    }
+
+    #[test]
+    fn test_lcm() {
+        assert_eq!(lcm(4, 6), 12);
+        assert_eq!(lcm(14, 21), 42);
+    }
 
     #[test]
     fn test_lower_primes() {
