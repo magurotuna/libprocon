@@ -21,6 +21,7 @@ pub trait Int:
     fn sqrt_floor(self) -> Self;
 }
 
+#[snippet("INT_TRAIT")]
 macro_rules! impl_int_for_numerics {
     ( $( $t: ty )* ) => (
         $(
