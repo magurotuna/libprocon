@@ -42,7 +42,7 @@ pub fn mod_inv(a: i64, m: i64) -> i64 {
 }
 
 #[snippet("MOD_INT")]
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct ModInt {
     value: i64,
     modulo: i64,
@@ -60,9 +60,82 @@ impl ModInt {
 }
 
 #[snippet("MOD_INT")]
+impl std::fmt::Debug for ModInt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.value)
+    }
+}
+
+#[snippet("MOD_INT")]
 impl std::fmt::Display for ModInt {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.value)
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::Add for ModInt {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self::new(self.value + other.value, self.modulo)
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::Sub for ModInt {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self {
+        Self::new(self.value - other.value, self.modulo)
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::Mul for ModInt {
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self {
+        Self::new(self.value * other.value, self.modulo)
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::Div for ModInt {
+    type Output = Self;
+
+    fn div(self, other: Self) -> Self {
+        let inv = mod_inv(other.value, self.modulo);
+        Self::new(self.value * inv, self.modulo)
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::AddAssign for ModInt {
+    fn add_assign(&mut self, other: Self) {
+        *self = Self::new(self.value + other.value, self.modulo);
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::SubAssign for ModInt {
+    fn sub_assign(&mut self, other: Self) {
+        *self = Self::new(self.value - other.value, self.modulo);
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::MulAssign for ModInt {
+    fn mul_assign(&mut self, other: Self) {
+        *self = Self::new(self.value * other.value, self.modulo);
+    }
+}
+
+#[snippet("MOD_INT")]
+impl std::ops::DivAssign for ModInt {
+    fn div_assign(&mut self, other: Self) {
+        let inv = mod_inv(other.value, self.modulo);
+        *self = Self::new(self.value * inv, self.modulo);
     }
 }
 
@@ -84,11 +157,23 @@ macro_rules! impl_mod_int {
                 }
             }
 
+            impl std::ops::AddAssign<$t> for ModInt {
+                fn add_assign(&mut self, other: $t) {
+                    *self = Self::new(self.value + (other as i64), self.modulo);
+                }
+            }
+
             impl std::ops::Sub<$t> for ModInt {
                 type Output = Self;
 
                 fn sub(self, other: $t) -> Self {
                     Self::new(self.value - (other as i64), self.modulo)
+                }
+            }
+
+            impl std::ops::SubAssign<$t> for ModInt {
+                fn sub_assign(&mut self, other: $t) {
+                    *self = Self::new(self.value - (other as i64), self.modulo);
                 }
             }
 
@@ -100,12 +185,25 @@ macro_rules! impl_mod_int {
                 }
             }
 
+            impl std::ops::MulAssign<$t> for ModInt {
+                fn mul_assign(&mut self, other: $t) {
+                    *self = Self::new(self.value * (other as i64), self.modulo);
+                }
+            }
+
             impl std::ops::Div<$t> for ModInt {
                 type Output = Self;
 
                 fn div(self, other: $t) -> Self {
                     let inv = mod_inv(other as i64, self.modulo);
                     Self::new(self.value * inv, self.modulo)
+                }
+            }
+
+            impl std::ops::DivAssign<$t> for ModInt {
+                fn div_assign(&mut self, other: $t) {
+                    let inv = mod_inv(other as i64, self.modulo);
+                    *self = Self::new(self.value * inv, self.modulo);
                 }
             }
         )*
@@ -155,5 +253,21 @@ mod tests {
         assert_eq!(mint + 10, 1);
         assert_eq!(mint * 10, 1);
         assert_eq!(mint / 8, 7);
+    }
+
+    #[test]
+    fn test_mod_int_assign() {
+        let value = 43;
+        let modulo = 13;
+        let mut mint = ModInt::new(value, modulo);
+        assert_eq!(mint, 4);
+        mint += 10;
+        assert_eq!(mint, 1);
+        mint -= 10;
+        assert_eq!(mint, 4);
+        mint *= ModInt::new(10, modulo);
+        assert_eq!(mint, 1);
+        mint /= 3;
+        assert_eq!(mint, 9);
     }
 }
