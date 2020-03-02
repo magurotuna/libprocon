@@ -1,4 +1,4 @@
-// [Rustで競技プログラミングの入力をスッキリ記述するマクロ - Qiita](https://qiita.com/tanakh/items/0ba42c7ca36cd29d0ac8)
+// cf. [Rustで競技プログラミングの入力をスッキリ記述するマクロ - Qiita](https://qiita.com/tanakh/items/0ba42c7ca36cd29d0ac8)
 #[macro_export]
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
