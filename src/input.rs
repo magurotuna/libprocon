@@ -1,3 +1,5 @@
+#![allow(unused_macros)]
+
 // cf. [Rustで競技プログラミングの入力をスッキリ記述するマクロ - Qiita](https://qiita.com/tanakh/items/0ba42c7ca36cd29d0ac8)
 #[macro_export]
 macro_rules! input {

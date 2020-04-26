@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use cargo_snippet::snippet;
 
 /// 二項係数を mod のもとで求める
