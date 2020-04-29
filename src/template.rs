@@ -64,52 +64,79 @@ mod util {
 }
 
 macro_rules! get {
-      ([$t:ty]) => {
-          {
-              let mut line: String = String::new();
-              stdin().read_line(&mut line).unwrap();
-              line.split_whitespace()
-                  .map(|t| t.parse::<$t>().unwrap())
-                  .collect::<Vec<_>>()
-          }
-      };
-      ([$t:ty]; $n:expr) => {
-          (0..$n).map(|_| get!([$t])).collect::<Vec<_>>()
-      };
-      ($t:ty) => {
-          {
-              let mut line: String = String::new();
-              stdin().read_line(&mut line).unwrap();
-              line.trim().parse::<$t>().unwrap()
-          }
-      };
-      ($($t:ty),*) => {
-          {
-              let mut line: String = String::new();
-              stdin().read_line(&mut line).unwrap();
-              let mut iter = line.split_whitespace();
-              (
-                  $(iter.next().unwrap().parse::<$t>().unwrap(),)*
-              )
-          }
-      };
-      ($t:ty; $n:expr) => {
-          (0..$n).map(|_|
-              get!($t)
-          ).collect::<Vec<_>>()
-      };
-      ($($t:ty),*; $n:expr) => {
-          (0..$n).map(|_|
-              get!($($t),*)
-          ).collect::<Vec<_>>()
-      };
-  }
+    ([$t:ty]) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            line.split_whitespace()
+                .map(|t| t.parse::<$t>().unwrap())
+                .collect::<Vec<_>>()
+        }
+    };
+    ([$t:ty]; $n:expr) => {
+        (0..$n).map(|_| get!([$t])).collect::<Vec<_>>()
+    };
+    ($t:ty) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            line.trim().parse::<$t>().unwrap()
+        }
+    };
+    (chars) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            line.trim().chars().collect::<Vec<char>>()
+        }
+    };
+    (usize1) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            line.split_whitespace()
+                .map(|t| t.parse::<usize>().unwrap() - 1)
+                .collect::<Vec<_>>()
+        }
+
+    };
+    ($($t:ty),*) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            let mut iter = line.split_whitespace();
+            (
+                $(iter.next().unwrap().parse::<$t>().unwrap(),)*
+            )
+        }
+    };
+    ($t:ty; $n:expr) => {
+        (0..$n).map(|_|
+            get!($t)
+        ).collect::<Vec<_>>()
+    };
+    ($($t:ty),*; $n:expr) => {
+        (0..$n).map(|_|
+            get!($($t),*)
+        ).collect::<Vec<_>>()
+    };
+}
 
 macro_rules! debug {
-      ($($a:expr),*) => {
-          eprintln!(concat!($(stringify!($a), " = {:?}, "),*), $($a),*);
-      }
-  }
+    ($($a:expr),*) => {
+        eprintln!(concat!($(stringify!($a), " = {:?}, "),*), $($a),*);
+    }
+}
+
+macro_rules! echo {
+    ($($a:expr),*) => {
+        let s = Vec::new();
+        $(
+            s.push(format!("{}", $a));
+        )*
+        println!("{}", s.join(" "));
+    }
+}
 
 const BIG_STACK_SIZE: bool = true;
 
