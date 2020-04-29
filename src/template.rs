@@ -64,6 +64,23 @@ mod util {
 }
 
 macro_rules! get {
+    (chars) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            line.trim().chars().collect::<Vec<char>>()
+        }
+    };
+    ([usize1]) => {
+        {
+            let mut line: String = String::new();
+            stdin().read_line(&mut line).unwrap();
+            line.split_whitespace()
+                .map(|t| t.parse::<usize>().unwrap() - 1)
+                .collect::<Vec<_>>()
+        }
+
+    };
     ([$t:ty]) => {
         {
             let mut line: String = String::new();
@@ -82,23 +99,6 @@ macro_rules! get {
             stdin().read_line(&mut line).unwrap();
             line.trim().parse::<$t>().unwrap()
         }
-    };
-    (chars) => {
-        {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            line.trim().chars().collect::<Vec<char>>()
-        }
-    };
-    (usize1) => {
-        {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            line.split_whitespace()
-                .map(|t| t.parse::<usize>().unwrap() - 1)
-                .collect::<Vec<_>>()
-        }
-
     };
     ($($t:ty),*) => {
         {
