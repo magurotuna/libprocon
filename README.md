@@ -1,2 +1,4 @@
+![Continuous integration](https://github.com/magurotuna/libprocon/workflows/Continuous%20integration/badge.svg)
+
 # libprocon
-library for programming contests
+My library for programming contests

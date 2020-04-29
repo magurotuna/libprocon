@@ -120,7 +120,7 @@ where
             deque = deque
                 .iter()
                 .filter(|&&x| x % p != T::zero())
-                .map(|x| *x)
+                .copied()
                 .collect();
             p = match deque.pop_front() {
                 Some(x) => x,
