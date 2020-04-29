@@ -23,7 +23,7 @@
 //! SOFTWARE.
 
 #![cargo_snippet::snippet("template")]
-#![allow(unused_imports, unused_macros, dead_code)]
+#![allow(unused_imports, unused_attributes, unused_macros, dead_code)]
 
 use std::cmp::{max, min, Ordering};
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};

@@ -1,3 +1,4 @@
+#![allow(clippy::suspicious_arithmetic_impl, clippy::suspicious_op_assign_impl)]
 use cargo_snippet::snippet;
 
 /// 累乗のmod
@@ -21,24 +22,32 @@ pub fn mod_pow(x: i64, n: i64, m: i64) -> i64 {
 /// m と a が互いに素でなければならないことに注意
 /// cf. [「1000000007 で割ったあまり」の求め方を総特集！ 〜 逆元から離散対数まで 〜 - Qiita](https://qiita.com/drken/items/3b4fdf0a78e7a138cd9a)
 #[snippet("MOD_INT")]
-pub fn mod_inv(a: i64, m: i64) -> i64 {
+pub fn mod_inv(val: i64, modulo: i64) -> i64 {
     use std::mem::swap;
-    let mut a = a;
-    let mut b = m;
-    let mut u = 1;
+    let mut a = val;
+    let mut b = modulo;
+    let mut ret = 1;
     let mut v = 0;
     while b > 0 {
         let t = a / b;
         a -= t * b;
         swap(&mut a, &mut b);
-        u -= t * v;
-        swap(&mut u, &mut v);
+        ret -= t * v;
+        swap(&mut ret, &mut v);
     }
-    u %= m;
-    if u < 0 {
-        u += m;
+    ret %= modulo;
+    if ret < 0 {
+        ret += modulo;
     }
-    u
+    ret
+}
+
+#[snippet("MOD_INT")]
+pub trait IntoModInt {
+    /// Create a ModInt instance with modulo 1_000_000_007 (= 10^9 + 7).
+    fn mint(&self) -> ModInt;
+    /// Create a ModInt instance with any modulo.
+    fn mint_with_mod(&self, modulo: Self) -> ModInt;
 }
 
 #[snippet("MOD_INT")]
@@ -143,6 +152,16 @@ impl std::ops::DivAssign for ModInt {
 macro_rules! impl_mod_int {
     ( $( $t: ty )* ) => (
         $(
+            impl IntoModInt for $t {
+                fn mint(&self) -> ModInt {
+                    ModInt::new(*self as i64, 1_000_000_007)
+                }
+
+                fn mint_with_mod(&self, modulo: $t) -> ModInt {
+                    ModInt::new(*self as i64, modulo as i64)
+                }
+            }
+
             impl std::cmp::PartialEq<$t> for ModInt {
                 fn eq(&self, other: &$t) -> bool {
                     self.value == (*other as i64)
@@ -246,9 +265,7 @@ mod tests {
 
     #[test]
     fn test_mod_int() {
-        let value = 43;
-        let modulo = 13;
-        let mint = ModInt::new(value, modulo);
+        let mint = 43.mint_with_mod(13);
         assert_eq!(mint, 4);
         assert_eq!(mint + 10, 1);
         assert_eq!(mint * 10, 1);
@@ -257,15 +274,13 @@ mod tests {
 
     #[test]
     fn test_mod_int_assign() {
-        let value = 43;
-        let modulo = 13;
-        let mut mint = ModInt::new(value, modulo);
+        let mut mint = 43.mint_with_mod(13);
         assert_eq!(mint, 4);
         mint += 10;
         assert_eq!(mint, 1);
         mint -= 10;
         assert_eq!(mint, 4);
-        mint *= ModInt::new(10, modulo);
+        mint *= 10.mint_with_mod(13);
         assert_eq!(mint, 1);
         mint /= 3;
         assert_eq!(mint, 9);
