@@ -30,95 +30,107 @@ use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDequ
 use std::io::{stdin, stdout, BufWriter, Write};
 use std::iter::FromIterator;
 
-mod util {
-    use std::fmt::Debug;
-    use std::io::{stdin, stdout, BufWriter, StdoutLock};
-    use std::str::FromStr;
-
-    pub fn line() -> String {
-        let mut line: String = String::new();
-        stdin().read_line(&mut line).unwrap();
-        line.trim().to_string()
-    }
-
-    pub fn chars() -> Vec<char> {
-        line().chars().collect()
-    }
-
-    pub fn gets<T: FromStr>() -> Vec<T>
-    where
-        <T as FromStr>::Err: Debug,
-    {
-        let mut line: String = String::new();
-        stdin().read_line(&mut line).unwrap();
-        line.split_whitespace()
-            .map(|t| t.parse().unwrap())
-            .collect()
-    }
-
-    pub fn with_bufwriter<F: FnOnce(BufWriter<StdoutLock>) -> ()>(f: F) {
-        let out = stdout();
-        let writer = BufWriter::new(out.lock());
-        f(writer)
-    }
-}
-
+#[macro_export]
 macro_rules! get {
-    ([$t:ty]) => {
+    (@inner [$src:expr] chars) => {
         {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            line.split_whitespace()
+            let mut buf = String::new();
+            $src.read_line(&mut buf).unwrap();
+            buf.trim().chars().collect::<Vec<char>>()
+        }
+    };
+    (@inner [$src:expr] usize1) => {
+        {
+            get!(@inner [$src] usize) - 1
+        }
+    };
+    (@inner [$src:expr] [usize1]) => {
+        {
+            get!(@inner [$src] [usize])
+                .into_iter()
+                .map(|v| v - 1)
+                .collect::<Vec<usize>>()
+        }
+    };
+    (@inner [$src:expr] [[usize1]; $n:expr]) => {
+        {
+            (0..$n).map(|_| get!(@inner [$src] [usize1])).collect::<Vec<_>>()
+        }
+    };
+    (@inner [$src:expr] [usize1; $n:expr]) => {
+        {
+            (0..$n).map(|_| get!(@inner [$src] [usize1])).flatten().collect::<Vec<_>>()
+        }
+    };
+    (@inner [$src:expr] [[chars]; $n:expr]) => {
+        {
+            (0..$n).map(|_| get!(@inner [$src] chars)).collect::<Vec<_>>()
+        }
+    };
+    (@inner [$src:expr] [chars; $n:expr]) => {
+        {
+            (0..$n).map(|_| get!(@inner [$src] chars)).collect::<Vec<_>>()
+        }
+    };
+    (@inner [$src:expr] [($($tt:tt),*); $n:expr]) => {
+        {
+            (0..$n).map(|_| get!(@inner [$src] ($($tt),*))).collect::<Vec<_>>()
+        }
+    };
+    (@inner [$src:expr] ($($tt:tt),*)) => {
+        {
+            let mut buf: String = String::new();
+            $src.read_line(&mut buf).unwrap();
+            let mut iter = buf.split_whitespace();
+            (
+                $(get!(@inner_elem_parse [$tt] iter.next().unwrap()),)*
+            )
+        }
+    };
+    (@inner [$src:expr] [$t:ty]) => {
+        {
+            let mut buf = String::new();
+            $src.read_line(&mut buf).unwrap();
+            buf.trim()
+                .split_whitespace()
                 .map(|t| t.parse::<$t>().unwrap())
                 .collect::<Vec<_>>()
         }
     };
-    ([$t:ty]; $n:expr) => {
-        (0..$n).map(|_| get!([$t])).collect::<Vec<_>>()
-    };
-    ($t:ty) => {
+    (@inner [$src:expr] [[$t:ty]; $n:expr]) => {
         {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            line.trim().parse::<$t>().unwrap()
+            (0..$n).map(|_| get!(@inner [$src] [$t])).collect::<Vec<_>>()
         }
     };
-    (chars) => {
+    (@inner [$src:expr] [$t:ty; $n:expr]) => {
         {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            line.trim().chars().collect::<Vec<char>>()
+            (0..$n).map(|_| get!(@inner [$src] [$t])).flatten().collect::<Vec<_>>()
         }
     };
-    (usize1) => {
+    (@inner [$src:expr] $t:ty) => {
         {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            line.split_whitespace()
-                .map(|t| t.parse::<usize>().unwrap() - 1)
-                .collect::<Vec<_>>()
-        }
-
-    };
-    ($($t:ty),*) => {
-        {
-            let mut line: String = String::new();
-            stdin().read_line(&mut line).unwrap();
-            let mut iter = line.split_whitespace();
-            (
-                $(iter.next().unwrap().parse::<$t>().unwrap(),)*
-            )
+            let mut buf = String::new();
+            $src.read_line(&mut buf).unwrap();
+            buf.trim().split_whitespace().next().unwrap().parse::<$t>().unwrap()
         }
     };
-    ($t:ty; $n:expr) => {
-        (0..$n).map(|_|
-            get!($t)
-        ).collect::<Vec<_>>()
+    (@inner_elem_parse [usize1] $elem:expr) => {
+        {
+            get!(@inner_elem_parse [usize] $elem) - 1
+        }
     };
-    ($($t:ty),*; $n:expr) => {
-        (0..$n).map(|_|
-            get!($($t),*)
-        ).collect::<Vec<_>>()
+    (@inner_elem_parse [$t:ty] $elem:expr) => {
+        {
+            $elem.parse::<$t>().unwrap()
+        }
+    };
+    ($tt:tt) => {
+        {
+            use std::io::BufRead;
+            let get_stdin = std::io::stdin();
+            let mut locked_stdin = get_stdin.lock();
+            get!(@inner [&mut locked_stdin] $tt)
+        }
     };
 }
 

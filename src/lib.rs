@@ -18,4 +18,5 @@ pub use modulo::*;
 pub use permutations::*;
 pub use read::*;
 pub use segment_tree::*;
+pub use template::*;
 pub use union_find::*;
