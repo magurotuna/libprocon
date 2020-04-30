@@ -142,7 +142,7 @@ macro_rules! debug {
 
 macro_rules! echo {
     ($($a:expr),*) => {
-        let s = Vec::new();
+        let mut s = Vec::new();
         $(
             s.push(format!("{}", $a));
         )*
