@@ -23,7 +23,13 @@
 //! SOFTWARE.
 
 #![cargo_snippet::snippet("template")]
-#![allow(unused_imports, unused_attributes, unused_macros, dead_code)]
+#![allow(
+    unused_imports,
+    unused_attributes,
+    unused_macros,
+    dead_code,
+    non_snake_case
+)]
 
 use std::cmp::{max, min, Ordering};
 use std::collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque};
@@ -148,6 +154,40 @@ macro_rules! echo {
         )*
         println!("{}", s.join(" "));
     }
+}
+
+#[macro_export]
+macro_rules! chmin {
+    ($base:ident, $($cmps:expr),+ $(,)*) => {
+        $base = min!($base, $($cmps),+);
+    };
+}
+
+#[macro_export]
+macro_rules! chmax {
+    ($base:ident, $($cmps:expr),+ $(,)*) => {
+        $base = max!($base, $($cmps),+);
+    };
+}
+
+#[macro_export]
+macro_rules! min {
+    ($a:expr, $b:expr $(,)*) => {{
+        std::cmp::min($a, $b)
+    }};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{
+        std::cmp::min($a, min!($($rest),+))
+    }};
+}
+
+#[macro_export]
+macro_rules! max {
+    ($a:expr, $b:expr $(,)*) => {{
+        std::cmp::max($a, $b)
+    }};
+    ($a:expr, $($rest:expr),+ $(,)*) => {{
+        std::cmp::max($a, max!($($rest),+))
+    }};
 }
 
 const BIG_STACK_SIZE: bool = true;
