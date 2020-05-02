@@ -16,12 +16,11 @@ struct RHInner {
 }
 
 #[snippet("ROLLING_HASH")]
+#[allow(clippy::redundant_field_names)]
 impl RHInner {
     fn new(hash: u64, power: u64) -> RHInner {
         RHInner {
-            #[allow(clippy::redundant_field_names)]
             hash: hash,
-            #[allow(clippy::redundant_field_names)]
             power: power,
         }
     }
