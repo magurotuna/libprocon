@@ -141,9 +141,10 @@ macro_rules! get {
 }
 
 macro_rules! debug {
-    ($($a:expr),*) => {
-        eprintln!(concat!($(stringify!($a), " = {:?}, "),*), $($a),*);
-    }
+    ($($a:expr),* $(,)*) => {
+        #[cfg(debug_assertions)]
+        eprintln!(concat!($("| ", stringify!($a), "={:?} "),*, "|"), $(&$a),*);
+    };
 }
 
 macro_rules! echo {
