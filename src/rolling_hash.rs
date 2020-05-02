@@ -19,7 +19,9 @@ struct RHInner {
 impl RHInner {
     fn new(hash: u64, power: u64) -> RHInner {
         RHInner {
+            #[allow(dedundant_field_names)]
             hash: hash,
+            #[allow(dedundant_field_names)]
             power: power,
         }
     }
