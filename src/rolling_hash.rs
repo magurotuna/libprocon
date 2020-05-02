@@ -19,9 +19,9 @@ struct RHInner {
 impl RHInner {
     fn new(hash: u64, power: u64) -> RHInner {
         RHInner {
-            #[allow(clippy::dedundant_field_names)]
+            #[allow(clippy::redundant_field_names)]
             hash: hash,
-            #[allow(clippy::dedundant_field_names)]
+            #[allow(clippy::redundant_field_names)]
             power: power,
         }
     }
