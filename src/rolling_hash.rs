@@ -41,6 +41,7 @@ impl RollingHash {
                 // https://competitive12.blogspot.com/2019/06/blog-post_26.html
                 (RHBase(2315961251), RHMod(4294966367)),
                 (RHBase(1692999586), RHMod(4294959359)),
+                (RHBase(1009), RHMod(1_000_000_007)),
             ],
         )
     }
@@ -69,13 +70,17 @@ impl RollingHash {
     }
 
     // get the hash between [left, right)
-    pub fn get(&self, left: usize, right: usize) -> u64 {
+    pub fn get(&self, left: usize, right: usize) -> Vec<u64> {
         self.hash_pow_list
             .iter()
             .map(|&(RHMod(modulo), ref hp)| {
                 (hp[right].hash + modulo - hp[left].hash * hp[right - left].power % modulo) % modulo
             })
-            .fold(0, |a, b| a ^ b)
+            .collect()
+    }
+
+    pub fn equal(&self, left1: usize, right1: usize, left2: usize, right2: usize) -> bool {
+        self.get(left1, right1) == self.get(left2, right2)
     }
 }
 
@@ -88,16 +93,25 @@ mod tests {
         let target: Vec<char> = "abcabcddd".chars().collect();
         let rh = RollingHash::new(&target);
         assert_eq!(rh.get(0, 3), rh.get(3, 6));
+        assert!(rh.equal(0, 3, 3, 6));
         assert_eq!(rh.get(1, 3), rh.get(4, 6));
+        assert!(rh.equal(1, 3, 4, 6));
         assert_eq!(rh.get(6, 7), rh.get(7, 8));
+        assert!(rh.equal(6, 7, 7, 8));
         assert_eq!(rh.get(7, 8), rh.get(8, 9));
+        assert!(rh.equal(7, 8, 8, 9));
         assert_ne!(rh.get(0, 4), rh.get(3, 7));
+        assert!(!rh.equal(0, 4, 3, 7));
         assert_ne!(rh.get(0, 3), rh.get(4, 7));
+        assert!(!rh.equal(0, 3, 4, 7));
 
         let target: Vec<char> = "strangeorange".chars().collect();
         let rh = RollingHash::new(&target);
         assert_eq!(rh.get(2, 7), rh.get(8, 13));
+        assert!(rh.equal(2, 7, 8, 13));
         assert_ne!(rh.get(1, 7), rh.get(7, 13));
+        assert!(!rh.equal(1, 7, 7, 13));
         assert_ne!(rh.get(0, 7), rh.get(6, 13));
+        assert!(!rh.equal(0, 7, 6, 13));
     }
 }
