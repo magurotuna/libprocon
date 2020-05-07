@@ -69,3 +69,25 @@ fn test_chmax_macro_trailing_comma() {
     chmax!(ans, 100, 0, -5, 100 * 2, 100 / 2,,);
     assert_eq!(ans, 200);
 }
+
+#[test]
+fn test_chmin_macro_indexing() {
+    let mut v = vec![1, 2, 3];
+    chmin!(v[1], 100, 0, -5, 100 * 2, 100 / 2,);
+    assert_eq!(v, vec![1, -5, 3]);
+
+    let mut v = vec![1, 2, 3];
+    chmin!(v[2], 100, 0, -5, 100 * 2, 100 / 2,,);
+    assert_eq!(v, vec![1, 2, -5]);
+}
+
+#[test]
+fn test_chmax_macro_indexing() {
+    let mut v = vec![1, 2, 3];
+    chmax!(v[1], 100, 0, -5, 100 * 2, 100 / 2,);
+    assert_eq!(v, vec![1, 200, 3]);
+
+    let mut v = vec![1, 2, 3];
+    chmax!(v[2], 100, 0, -5, 100 * 2, 100 / 2,,);
+    assert_eq!(v, vec![1, 2, 200]);
+}

@@ -159,14 +159,14 @@ macro_rules! echo {
 
 #[macro_export]
 macro_rules! chmin {
-    ($base:ident, $($cmps:expr),+ $(,)*) => {
+    ($base:expr, $($cmps:expr),+ $(,)*) => {
         $base = min!($base, $($cmps),+);
     };
 }
 
 #[macro_export]
 macro_rules! chmax {
-    ($base:ident, $($cmps:expr),+ $(,)*) => {
+    ($base:expr, $($cmps:expr),+ $(,)*) => {
         $base = max!($base, $($cmps),+);
     };
 }
