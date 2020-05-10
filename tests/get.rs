@@ -51,4 +51,12 @@ fn test_get_macro() {
         test_get!(["3 2 1\n30 20 10\n"] [(usize1, usize1, u64); 2]),
         vec![(2_usize, 1_usize, 1_u64), (29, 19, 10)]
     );
+    assert_eq!(
+        test_get!(["3 2\n"] [(usize1, usize); 1]),
+        vec![(2_usize, 2_usize)]
+    );
+    assert_eq!(
+        test_get!(["3 2 1\n30 20 10\n"] [[usize]; 2]),
+        vec![vec![3, 2, 1], vec![30, 20, 10]]
+    );
 }

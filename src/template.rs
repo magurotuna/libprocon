@@ -159,20 +159,35 @@ macro_rules! echo {
 
 #[macro_export]
 macro_rules! chmin {
-    ($base:ident, $($cmps:expr),+ $(,)*) => {
-        $base = min!($base, $($cmps),+);
-    };
+    ($base:expr, $($cmps:expr),+ $(,)*) => {{
+        let cmp_min = min!($($cmps),+);
+        if $base > cmp_min {
+            $base = cmp_min;
+            true
+        } else {
+            false
+        }
+    }};
 }
 
 #[macro_export]
 macro_rules! chmax {
-    ($base:ident, $($cmps:expr),+ $(,)*) => {
-        $base = max!($base, $($cmps),+);
-    };
+    ($base:expr, $($cmps:expr),+ $(,)*) => {{
+        let cmp_max = max!($($cmps),+);
+        if $base < cmp_max {
+            $base = cmp_max;
+            true
+        } else {
+            false
+        }
+    }};
 }
 
 #[macro_export]
 macro_rules! min {
+    ($a:expr $(,)*) => {{
+        $a
+    }};
     ($a:expr, $b:expr $(,)*) => {{
         std::cmp::min($a, $b)
     }};
@@ -183,6 +198,9 @@ macro_rules! min {
 
 #[macro_export]
 macro_rules! max {
+    ($a:expr $(,)*) => {{
+        $a
+    }};
     ($a:expr, $b:expr $(,)*) => {{
         std::cmp::max($a, $b)
     }};
