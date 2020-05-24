@@ -95,13 +95,13 @@ fn test_chmax_macro_trailing_comma() {
 #[test]
 fn test_chmin_macro_indexing() {
     let mut v = vec![1, 2, 3];
-    let changed = chmin!(v[1], 100, 0, -5, 100 * 2, 100 / 2,);
+    let changed = chmin!(v[1], v[0], 0, -5, 100 * 2, 100 / 2,);
     assert_eq!(v, vec![1, -5, 3]);
     assert!(changed);
 
     let mut v = vec![1, 2, 3];
-    let changed = chmin!(v[2], 100, 0, -5, 100 * 2, 100 / 2,,);
-    assert_eq!(v, vec![1, 2, -5]);
+    let changed = chmin!(v[2], v[1] - 10, 0, -5, 100 * 2, 100 / 2,,);
+    assert_eq!(v, vec![1, 2, -8]);
     assert!(changed);
 
     let mut v = vec![1, 2, 3];
@@ -113,13 +113,13 @@ fn test_chmin_macro_indexing() {
 #[test]
 fn test_chmax_macro_indexing() {
     let mut v = vec![1, 2, 3];
-    let changed = chmax!(v[1], 100, 0, -5, 100 * 2, 100 / 2,);
+    let changed = chmax!(v[1], v[0], 0, -5, 100 * 2, 100 / 2,);
     assert_eq!(v, vec![1, 200, 3]);
     assert!(changed);
 
     let mut v = vec![1, 2, 3];
-    let changed = chmax!(v[2], 100, 0, -5, 100 * 2, 100 / 2,,);
-    assert_eq!(v, vec![1, 2, 200]);
+    let changed = chmax!(v[2], v[1] * 200, 0, -5, 100 * 2, 100 / 2,,);
+    assert_eq!(v, vec![1, 2, 400]);
     assert!(changed);
 
     let mut v = vec![1, 2, 3];
