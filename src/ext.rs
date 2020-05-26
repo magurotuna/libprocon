@@ -1,13 +1,13 @@
 use cargo_snippet::snippet;
 
 #[snippet("BINARY_SEARCH")]
-pub trait SliceExt<T: Ord> {
+pub trait BinarySearchExt<T: Ord> {
     fn lower_bound(&self, value: &T) -> usize;
     fn upper_bound(&self, value: &T) -> usize;
 }
 
 #[snippet("BINARY_SEARCH")]
-impl<T> SliceExt<T> for [T]
+impl<T> BinarySearchExt<T> for [T]
 where
     T: Ord,
 {
