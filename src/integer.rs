@@ -83,6 +83,29 @@ where
     a / gcd(a, b) * b
 }
 
+#[snippet("DIVISORS", include = "INT_TRAIT")]
+pub fn divosors<T>(n: T) -> Vec<T>
+where
+    T: Int,
+{
+    let mut ret = Vec::new();
+    let mut cur = T::one();
+    loop {
+        if cur * cur > n {
+            break;
+        }
+        if n % cur == T::zero() {
+            ret.push(cur);
+            if cur * cur != n {
+                ret.push(n / cur);
+            }
+        }
+        cur = cur.next();
+    }
+    ret.sort_unstable();
+    ret
+}
+
 #[snippet("PRIME", include = "INT_TRAIT")]
 pub trait Prime<T: Int> {
     fn lower_primes(&self) -> Vec<T>;
@@ -187,6 +210,14 @@ mod tests {
     fn test_lcm() {
         assert_eq!(lcm(4, 6), 12);
         assert_eq!(lcm(14, 21), 42);
+    }
+
+    #[test]
+    fn test_divisors() {
+        assert_eq!(divosors(12), vec![1, 2, 3, 4, 6, 12]);
+        assert_eq!(divosors(1), vec![1]);
+        assert_eq!(divosors(7), vec![1, 7]);
+        assert_eq!(divosors(25), vec![1, 5, 25]);
     }
 
     #[test]
