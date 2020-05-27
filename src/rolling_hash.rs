@@ -2,10 +2,12 @@ use cargo_snippet::snippet;
 
 #[snippet("ROLLING_HASH")]
 #[derive(Debug)]
+#[doc(hidden)]
 pub struct RHMod(u64);
 
 #[snippet("ROLLING_HASH")]
 #[derive(Debug)]
+#[doc(hidden)]
 pub struct RHBase(u64);
 
 #[snippet("ROLLING_HASH")]
