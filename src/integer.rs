@@ -18,12 +18,59 @@ pub trait Int:
     fn one() -> Self;
     fn next(self) -> Self;
     fn prev(self) -> Self;
-    fn sqrt_floor(self) -> Self;
+    fn sqrt_floor(self) -> Self {
+        if self < Self::zero() {
+            return Self::zero();
+        }
+        let two = Self::one().next();
+        let mut ok = Self::zero();
+        let mut ng = self.next();
+        while ng - ok > Self::one() {
+            let mid = (ng + ok) / two;
+            if mid * mid <= self {
+                ok = mid;
+            } else {
+                ng = mid;
+            }
+        }
+        ok
+    }
+    fn is_zero(&self) -> bool {
+        *self == Self::zero()
+    }
+    fn is_one(&self) -> bool {
+        *self == Self::one()
+    }
+    fn div_rem(&self, other: &Self) -> (Self, Self) {
+        (*self / *other, *self % *other)
+    }
+    fn div_floor(&self, other: &Self) -> Self {
+        // Algorithm from [Daan Leijen. _Division and Modulus for Computer Scientists_,
+        // December 2001](http://research.microsoft.com/pubs/151917/divmodnote-letter.pdf)
+        let (d, r) = self.div_rem(other);
+        if (r > Self::zero() && *other < Self::zero())
+            || (r < Self::zero() && *other > Self::zero())
+        {
+            d.prev()
+        } else {
+            d
+        }
+    }
+    fn mod_floor(&self, other: &Self) -> Self {
+        let r = *self % *other;
+        if (r > Self::zero() && *other < Self::zero())
+            || (r < Self::zero() && *other > Self::zero())
+        {
+            r + *other
+        } else {
+            r
+        }
+    }
 }
 
 #[snippet("INT_TRAIT")]
 macro_rules! impl_int_for_numerics {
-    ( $( $t: ty )* ) => (
+    ( $( $t: ty )* ) => {
         $(
             impl Int for $t {
                 fn zero() -> Self {
@@ -38,26 +85,9 @@ macro_rules! impl_int_for_numerics {
                 fn prev(self) -> Self {
                     self - Self::one()
                 }
-                fn sqrt_floor(self) -> Self {
-                    if self < Self::zero() {
-                        return Self::zero();
-                    }
-                    let two = Self::one().next();
-                    let mut ok = Self::zero();
-                    let mut ng = self.next();
-                    while ng - ok > 1 {
-                        let mid = (ng + ok) / two;
-                        if mid * mid <= self {
-                            ok = mid;
-                        } else {
-                            ng = mid;
-                        }
-                    }
-                    ok
-                }
             }
         )*
-    )
+    }
 }
 
 #[snippet("INT_TRAIT")]
@@ -224,7 +254,7 @@ mod tests {
     fn test_lower_primes() {
         assert_eq!(10_usize.lower_primes(), vec![2_usize, 3, 5, 7]);
         assert_eq!(15_usize.lower_primes(), vec![2_usize, 3, 5, 7, 11, 13]);
-        assert_eq!(1_usize.lower_primes(), vec![]);
+        assert!(1_usize.lower_primes().is_empty());
         assert_eq!(2_usize.lower_primes(), vec![2_usize]);
     }
 
