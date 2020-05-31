@@ -3,6 +3,7 @@
 use crate::integer::{gcd, Int};
 use cargo_snippet::snippet;
 
+#[snippet("RATIONAL")]
 #[derive(Clone, Copy)]
 pub struct Rational<T: Int> {
     /// Numerator
@@ -232,10 +233,10 @@ where
 
     fn add(self, rhs: Self) -> Self::Output {
         let denom_gcd = gcd(self.denomitor, rhs.denomitor);
-        let denom_lcm = (self.denomitor * rhs.denomitor) / denom_gcd;
-        let self_mul = rhs.denomitor / denom_gcd;
-        let rhs_mul = self.denomitor / denom_gcd;
-        let numer = self.numerator * self_mul + rhs.numerator * rhs_mul;
+        let denom_lcm = (self.denomitor.mul(rhs.denomitor)).div(denom_gcd);
+        let self_mul = (rhs.denomitor).div(denom_gcd);
+        let rhs_mul = (self.denomitor).div(denom_gcd);
+        let numer = self.numerator.mul(self_mul).add(rhs.numerator.mul(rhs_mul));
         Rational::new(numer, denom_lcm)
     }
 }
@@ -248,7 +249,7 @@ where
 
     fn add(self, rhs: T) -> Self::Output {
         let rhs = Self::from_integer(rhs);
-        self + rhs
+        self.add(rhs)
     }
 }
 
@@ -257,7 +258,7 @@ where
     T: Int,
 {
     fn add_assign(&mut self, other: Self) {
-        let add = *self + other;
+        let add = std::ops::Add::<Self>::add(*self, other);
         self.numerator = add.numerator;
         self.denomitor = add.denomitor;
     }
@@ -268,7 +269,7 @@ where
     T: Int,
 {
     fn add_assign(&mut self, other: T) {
-        let add = *self + other;
+        let add = std::ops::Add::<T>::add(*self, other);
         self.numerator = add.numerator;
         self.denomitor = add.denomitor;
     }
@@ -282,10 +283,10 @@ where
 
     fn sub(self, rhs: Self) -> Self::Output {
         let denom_gcd = gcd(self.denomitor, rhs.denomitor);
-        let denom_lcm = (self.denomitor * rhs.denomitor) / denom_gcd;
-        let self_mul = rhs.denomitor / denom_gcd;
-        let rhs_mul = self.denomitor / denom_gcd;
-        let numer = self.numerator * self_mul - rhs.numerator * rhs_mul;
+        let denom_lcm = self.denomitor.mul(rhs.denomitor).div(denom_gcd);
+        let self_mul = rhs.denomitor.div(denom_gcd);
+        let rhs_mul = self.denomitor.div(denom_gcd);
+        let numer = self.numerator.mul(self_mul).sub(rhs.numerator.mul(rhs_mul));
         Rational::new(numer, denom_lcm)
     }
 }
@@ -333,10 +334,10 @@ where
     fn mul(self, rhs: Self) -> Self::Output {
         let gcd1 = gcd(self.numerator, rhs.denomitor);
         let gcd2 = gcd(self.denomitor, rhs.numerator);
-        let num1 = self.numerator / gcd1;
-        let den1 = self.denomitor / gcd2;
-        let num2 = rhs.numerator / gcd2;
-        let den2 = rhs.denomitor / gcd1;
+        let num1 = self.numerator.div(gcd1);
+        let den1 = self.denomitor.div(gcd2);
+        let num2 = rhs.numerator.div(gcd2);
+        let den2 = rhs.denomitor.div(gcd1);
         Self::new(num1 * num2, den1 * den2)
     }
 }
@@ -383,7 +384,7 @@ where
 
     fn div(self, rhs: Self) -> Self::Output {
         let rhs_inv = Self::new(rhs.denomitor, rhs.numerator);
-        self * rhs_inv
+        std::ops::Mul::<Rational<T>>::mul(self, rhs_inv)
     }
 }
 
@@ -395,7 +396,7 @@ where
 
     fn div(self, rhs: T) -> Self::Output {
         let rhs_inv = Self::new(T::one(), rhs);
-        self * rhs_inv
+        std::ops::Mul::<Rational<T>>::mul(self, rhs_inv)
     }
 }
 
@@ -598,14 +599,8 @@ mod tests {
 
     #[test]
     fn add_with_int() {
-        assert_eq!(
-            Rational::new(3, 4) + 1,
-            Rational::new(7, 4)
-        );
-        assert_eq!(
-            -2 + Rational::new(-1, 2),
-            Rational::new(-5, 2)
-        );
+        assert_eq!(Rational::new(3, 4) + 1, Rational::new(7, 4));
+        assert_eq!(-2 + Rational::new(-1, 2), Rational::new(-5, 2));
     }
 
     #[test]
@@ -641,14 +636,8 @@ mod tests {
 
     #[test]
     fn sub_with_int() {
-        assert_eq!(
-            Rational::new(3, 4) - 1,
-            Rational::new(-1, 4)
-        );
-        assert_eq!(
-            2 - Rational::new(-1, 2),
-            Rational::new(5, 2)
-        );
+        assert_eq!(Rational::new(3, 4) - 1, Rational::new(-1, 4));
+        assert_eq!(2 - Rational::new(-1, 2), Rational::new(5, 2));
     }
 
     #[test]
@@ -692,14 +681,8 @@ mod tests {
 
     #[test]
     fn mul_with_int() {
-        assert_eq!(
-            Rational::new(3, 4) * 3,
-            Rational::new(9, 4)
-        );
-        assert_eq!(
-            3 * Rational::new(-1, 2),
-            Rational::new(-3, 2)
-        );
+        assert_eq!(Rational::new(3, 4) * 3, Rational::new(9, 4));
+        assert_eq!(3 * Rational::new(-1, 2), Rational::new(-3, 2));
     }
 
     #[test]
@@ -751,14 +734,8 @@ mod tests {
 
     #[test]
     fn div_with_int() {
-        assert_eq!(
-            Rational::new(3, 4) / 3,
-            Rational::new(1, 4)
-        );
-        assert_eq!(
-            3 / Rational::new(-5, 2),
-            Rational::new(-6, 5)
-        );
+        assert_eq!(Rational::new(3, 4) / 3, Rational::new(1, 4));
+        assert_eq!(3 / Rational::new(-5, 2), Rational::new(-6, 5));
     }
 
     #[test]
