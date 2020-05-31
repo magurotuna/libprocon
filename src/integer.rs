@@ -42,7 +42,7 @@ pub trait Int:
         *self == Self::one()
     }
     fn div_rem(&self, other: &Self) -> (Self, Self) {
-        (*self / *other, *self % *other)
+        ((*self) / (*other), (*self) % (*other))
     }
     fn div_floor(&self, other: &Self) -> Self {
         // Algorithm from [Daan Leijen. _Division and Modulus for Computer Scientists_,
