@@ -218,8 +218,8 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::HashMap;
     use maplit::hashmap;
+    use std::collections::HashMap;
 
     #[test]
     fn test_sqrt_floor() {
