@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 cargo-snippet = "0.6"
+maplit = "1.0"

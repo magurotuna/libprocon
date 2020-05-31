@@ -1,6 +1,7 @@
 use cargo_snippet::snippet;
 
 #[snippet("INT_TRAIT")]
+#[snippet("INT")]
 pub trait Int:
     std::ops::Add<Output = Self>
     + std::ops::Sub<Output = Self>
@@ -69,6 +70,7 @@ pub trait Int:
 }
 
 #[snippet("INT_TRAIT")]
+#[snippet("INT")]
 macro_rules! impl_int_for_numerics {
     ( $( $t: ty )* ) => {
         $(
@@ -91,9 +93,11 @@ macro_rules! impl_int_for_numerics {
 }
 
 #[snippet("INT_TRAIT")]
+#[snippet("INT")]
 impl_int_for_numerics!(u8 i8 u16 i16 u32 i32 u64 i64 usize isize);
 
-#[snippet("GCD", include = "INT_TRAIT")]
+#[snippet("INT")]
+#[snippet("GCD")]
 pub fn gcd<T>(a: T, b: T) -> T
 where
     T: Int,
@@ -105,7 +109,7 @@ where
     }
 }
 
-#[snippet("LCM", include = "GCD", include = "INT_TRAIT")]
+#[snippet("INT")]
 pub fn lcm<T>(a: T, b: T) -> T
 where
     T: Int,
@@ -113,7 +117,7 @@ where
     a / gcd(a, b) * b
 }
 
-#[snippet("DIVISORS", include = "INT_TRAIT")]
+#[snippet("INT")]
 pub fn divosors<T>(n: T) -> Vec<T>
 where
     T: Int,
@@ -136,80 +140,86 @@ where
     ret
 }
 
-#[snippet("PRIME", include = "INT_TRAIT")]
-pub trait Prime<T: Int> {
-    fn lower_primes(&self) -> Vec<T>;
-    fn factorize(&self) -> std::collections::HashMap<T, usize>;
-}
-
-#[snippet("PRIME", include = "INT_TRAIT")]
-impl<T> Prime<T> for T
+/// Time complexity: O(n log log n)
+#[snippet("INT")]
+pub fn lower_primes<T>(n: T) -> Vec<T>
 where
     T: Int,
 {
-    /// エラトステネスの篩を用いてself以下の素数を求める
-    /// 計算量: O(n log log n)
-    fn lower_primes(&self) -> Vec<T> {
-        let &this = self;
-        let mut v = Vec::new();
-        if this <= T::one() {
-            return v;
-        }
-        let mut deque = std::collections::VecDeque::new();
-        let mut t = T::one().next(); // 2, which is the first prime number
+    let mut ret = Vec::new();
+    if n <= T::one() {
+        return ret;
+    }
+    let mut deque = std::collections::VecDeque::new();
+    let mut t = T::one().next(); // 2, which is the first prime number
 
-        // prepare `2, 3, 4, ..., this` sequence
-        while t <= this {
-            deque.push_back(t);
-            t = t.next();
-        }
+    // prepare `2, 3, 4, ..., this` sequence
+    while t <= n {
+        deque.push_back(t);
+        t = t.next();
+    }
 
-        let mut p = match deque.pop_front() {
+    let mut p = match deque.pop_front() {
+        Some(x) => x,
+        None => return ret,
+    };
+    ret.push(p);
+    while p * p <= n {
+        deque = deque
+            .iter()
+            .filter(|&&x| x % p != T::zero())
+            .copied()
+            .collect();
+        p = match deque.pop_front() {
             Some(x) => x,
-            None => return v,
+            None => return ret,
         };
-        v.push(p);
-        while p * p <= this {
-            deque = deque
-                .iter()
-                .filter(|&&x| x % p != T::zero())
-                .copied()
-                .collect();
-            p = match deque.pop_front() {
-                Some(x) => x,
-                None => return v,
-            };
-            v.push(p);
-        }
-        for n in deque {
-            v.push(n);
-        }
-        v
+        ret.push(p);
     }
-
-    /// エラトステネスの篩を用いてselfを素因数分解する
-    fn factorize(&self) -> std::collections::HashMap<T, usize> {
-        let mut ret = std::collections::HashMap::new();
-        let primes = self.sqrt_floor().lower_primes();
-
-        let mut tmp = *self;
-        for prime in primes {
-            while tmp % prime == T::zero() {
-                tmp = tmp / prime;
-                *ret.entry(prime).or_insert(0) += 1;
-            }
-        }
-        if tmp > T::one() {
-            *ret.entry(tmp).or_insert(0) += 1;
-        }
-        ret
+    for n in deque {
+        ret.push(n);
     }
+    ret
+}
+
+/// Time complexity: O(sqrt(n))
+#[snippet("INT")]
+pub fn factorize<T>(n: T) -> std::collections::HashMap<T, usize>
+where
+    T: Int,
+{
+    let mut ret = std::collections::HashMap::new();
+    if n <= T::one() {
+        return ret;
+    }
+    let mut n = n;
+    let mut cur = T::one().next(); // 2
+    loop {
+        if cur * cur > n {
+            break;
+        }
+        if n % cur != T::zero() {
+            cur = cur.next();
+            continue;
+        }
+        let mut exp = 0;
+        while n % cur == T::zero() {
+            exp += 1;
+            n = n / cur;
+        }
+        ret.insert(cur, exp);
+    }
+    if n != T::one() {
+        ret.insert(n, 1);
+    }
+    ret
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::collections::HashMap;
+    use maplit::hashmap;
 
     #[test]
     fn test_sqrt_floor() {
@@ -252,38 +262,48 @@ mod tests {
 
     #[test]
     fn test_lower_primes() {
-        assert_eq!(10_usize.lower_primes(), vec![2_usize, 3, 5, 7]);
-        assert_eq!(15_usize.lower_primes(), vec![2_usize, 3, 5, 7, 11, 13]);
-        assert!(1_usize.lower_primes().is_empty());
-        assert_eq!(2_usize.lower_primes(), vec![2_usize]);
+        assert_eq!(lower_primes(10_usize), vec![2_usize, 3, 5, 7]);
+        assert_eq!(lower_primes(15_usize), vec![2_usize, 3, 5, 7, 11, 13]);
+        assert!(lower_primes(1_usize).is_empty());
+        assert_eq!(lower_primes(2_usize), vec![2_usize]);
+        assert_eq!(lower_primes(3_usize), vec![2_usize, 3]);
     }
 
     #[test]
     fn test_factorize() {
-        let mut result_10 = HashMap::new();
-        result_10.insert(2_usize, 1_usize);
-        result_10.insert(5_usize, 1_usize);
-        assert_eq!(10_usize.factorize(), result_10);
+        let result_0: HashMap<usize, usize> = hashmap! {};
+        assert_eq!(factorize(0_usize), result_0);
 
-        let mut result_12 = HashMap::new();
-        result_12.insert(2_usize, 2_usize);
-        result_12.insert(3_usize, 1_usize);
-        assert_eq!(12_usize.factorize(), result_12);
+        let result_1: HashMap<usize, usize> = hashmap! {};
+        assert_eq!(factorize(1_usize), result_1);
 
-        let result_1 = HashMap::new();
-        assert_eq!(1_usize.factorize(), result_1);
+        let result_2 = hashmap! {
+            2_usize => 1_usize,
+        };
+        assert_eq!(factorize(2_usize), result_2);
 
-        let result_0 = HashMap::new();
-        assert_eq!(0_usize.factorize(), result_0);
+        let result_10 = hashmap! {
+            2_usize => 1_usize,
+            5 => 1,
+        };
+        assert_eq!(factorize(10_usize), result_10);
 
-        let mut result_99991 = HashMap::new();
-        result_99991.insert(99991_usize, 1_usize);
-        assert_eq!(99991_usize.factorize(), result_99991);
+        let result_12 = hashmap! {
+            2_usize => 2_usize,
+            3 => 1,
+        };
+        assert_eq!(factorize(12_usize), result_12);
 
-        let mut result_2013 = HashMap::new();
-        result_2013.insert(3_usize, 1_usize);
-        result_2013.insert(11_usize, 1_usize);
-        result_2013.insert(61_usize, 1_usize);
-        assert_eq!(2013_usize.factorize(), result_2013);
+        let result_99991 = hashmap! {
+            99991_usize => 1_usize,
+        };
+        assert_eq!(factorize(99991_usize), result_99991);
+
+        let result_2013 = hashmap! {
+            3_usize => 1_usize,
+            11_usize => 1_usize,
+            61_usize => 1_usize,
+        };
+        assert_eq!(factorize(2013_usize), result_2013);
     }
 }

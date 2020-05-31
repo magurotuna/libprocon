@@ -3,7 +3,7 @@
 use crate::integer::{gcd, Int};
 use cargo_snippet::snippet;
 
-#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
+#[snippet("RATIONAL", include = "GCD", include = "INT_TRAIT")]
 #[derive(Clone, Copy)]
 pub struct Rational<T: Int> {
     /// Numerator
