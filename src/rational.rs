@@ -686,6 +686,19 @@ mod tests {
     }
 
     #[test]
+    fn mul_may_overflow() {
+        assert_eq!(
+            Rational::<i32>::new(7, 10_i32.pow(9)) * Rational::<i32>::new(10_i32.pow(5), 63),
+            Rational::new(1, 9 * 10_i32.pow(4))
+        );
+
+        assert_eq!(
+            Rational::<i32>::new(7, 10_i32.pow(9)) * Rational::<i32>::new(-10_i32.pow(5), 63),
+            Rational::new(-1, 9 * 10_i32.pow(4))
+        );
+    }
+
+    #[test]
     fn mul_assign_with_self() {
         let mut r = Rational::new(1, 2);
         r *= Rational::new(3, 4);
