@@ -3,7 +3,7 @@
 use crate::integer::{gcd, Int};
 use cargo_snippet::snippet;
 
-#[snippet("RATIONAL")]
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 #[derive(Clone, Copy)]
 pub struct Rational<T: Int> {
     /// Numerator
@@ -12,6 +12,7 @@ pub struct Rational<T: Int> {
     denomitor: T,
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::fmt::Display for Rational<T>
 where
     T: Int + std::fmt::Display,
@@ -21,6 +22,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::fmt::Debug for Rational<T>
 where
     T: Int + std::fmt::Display,
@@ -30,6 +32,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T: Int> Rational<T> {
     pub fn new(numerator: T, denomitor: T) -> Rational<T> {
         let mut r = Rational {
@@ -97,6 +100,7 @@ impl<T: Int> Rational<T> {
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> From<T> for Rational<T>
 where
     T: Int,
@@ -106,6 +110,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> From<(T, T)> for Rational<T>
 where
     T: Int,
@@ -115,6 +120,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> PartialEq<Self> for Rational<T>
 where
     T: Int,
@@ -124,8 +130,10 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> Eq for Rational<T> where T: Int {}
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> PartialEq<T> for Rational<T>
 where
     T: Int,
@@ -136,6 +144,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 macro_rules! impl_partial_eq_with_rational_for_numerics {
     ( $( $t: ty )* ) => {
         $(
@@ -148,8 +157,10 @@ macro_rules! impl_partial_eq_with_rational_for_numerics {
         )*
     }
 }
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl_partial_eq_with_rational_for_numerics!(u8 i8 u16 i16 u32 i32 u64 i64 usize isize);
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> Ord for Rational<T>
 where
     T: Int,
@@ -192,6 +203,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> PartialOrd<Self> for Rational<T>
 where
     T: Int,
@@ -201,6 +213,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> PartialOrd<T> for Rational<T>
 where
     T: Int,
@@ -211,6 +224,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 macro_rules! impl_partial_ord_with_rational_for_numerics {
     ( $( $t: ty )* ) => {
         $(
@@ -223,8 +237,10 @@ macro_rules! impl_partial_ord_with_rational_for_numerics {
         )*
     }
 }
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl_partial_ord_with_rational_for_numerics!(u8 i8 u16 i16 u32 i32 u64 i64 usize isize);
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Add<Self> for Rational<T>
 where
     T: Int,
@@ -241,6 +257,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Add<T> for Rational<T>
 where
     T: Int,
@@ -253,6 +270,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::AddAssign<Self> for Rational<T>
 where
     T: Int,
@@ -264,6 +282,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::AddAssign<T> for Rational<T>
 where
     T: Int,
@@ -275,6 +294,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Sub<Self> for Rational<T>
 where
     T: Int,
@@ -291,6 +311,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Sub<T> for Rational<T>
 where
     T: Int,
@@ -303,6 +324,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::SubAssign<Self> for Rational<T>
 where
     T: Int,
@@ -314,6 +336,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::SubAssign<T> for Rational<T>
 where
     T: Int,
@@ -325,6 +348,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Mul<Self> for Rational<T>
 where
     T: Int,
@@ -342,6 +366,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Mul<T> for Rational<T>
 where
     T: Int,
@@ -354,6 +379,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::MulAssign<Self> for Rational<T>
 where
     T: Int,
@@ -365,6 +391,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::MulAssign<T> for Rational<T>
 where
     T: Int,
@@ -376,6 +403,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Div<Self> for Rational<T>
 where
     T: Int,
@@ -388,6 +416,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::Div<T> for Rational<T>
 where
     T: Int,
@@ -400,6 +429,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::DivAssign<Self> for Rational<T>
 where
     T: Int,
@@ -411,6 +441,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl<T> std::ops::DivAssign<T> for Rational<T>
 where
     T: Int,
@@ -422,6 +453,7 @@ where
     }
 }
 
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 macro_rules! impl_ops_for_numerics {
     ( $( $t: ty )* ) => {
         $(
@@ -452,6 +484,7 @@ macro_rules! impl_ops_for_numerics {
         )*
     }
 }
+#[snippet("RATIONAL", include = "INT_TRAIT", include = "GCD")]
 impl_ops_for_numerics!(u8 i8 u16 i16 u32 i32 u64 i64 usize isize);
 
 #[cfg(test)]
